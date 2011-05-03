@@ -40,6 +40,7 @@ Prittag expects a XML file and at least one audio file as arguments.
 The XML file tells prittag which tags it should write into the files and is expected to look like example.xml.
 By default prittag will perform a  white space stripping on every tag and every line of multi line tags.
 You can enable and disable this as well globally as for every single tag by adding the option "strip-space" and setting it either to "yes" or "no".
+If the cover path is not absolute, the path will be interpreted relativ to the config file.
 For example:
 
 ```xml

@@ -69,6 +69,8 @@ def parse_xml(path):
             value = chapters2
         else:
             value = unicode(child.text)
+            if key == 'cover':
+                value = get_cover_path(value, path)
             if disable_strip_space_globally:
                 if 'strip-space' in child.keys():
                     if child.get('strip-space') in ['Yes', 'yes']:
@@ -99,6 +101,13 @@ def parse_xml(path):
                                                                        str(value))
             sys.exit(1)
     return tags
+
+def get_cover_path(path, path_to_config):
+    config_folder = os.path.split(path_to_config)[0]
+    if path != os.path.abspath(path):
+        #Make relativ path relativ to config file
+        path = os.path.join(config_folder, path)
+    return path
 
 def strip_string(string):
     if len(string.splitlines()) > 1:
