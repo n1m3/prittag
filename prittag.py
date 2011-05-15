@@ -35,6 +35,7 @@ import mutagen.id3 as id3
 
 def parse_xml(path):
     tags = {}
+    empty_tags = 0
     disable_strip_space_globally = False
     try:
         with open(path, 'r') as f:
@@ -68,22 +69,27 @@ def parse_xml(path):
                     chapters2.append(chapter2)
             value = chapters2
         else:
-            value = unicode(child.text)
-            if key == 'cover':
-                value = get_cover_path(value, path)
-            if disable_strip_space_globally:
-                if 'strip-space' in child.keys():
-                    if child.get('strip-space') in ['Yes', 'yes']:
-                        value = strip_string(value)
+            value = child.text
+            if value == None:
+                empty_tags += 1
+                continue
             else:
-                if 'strip-space' in child.keys():
-                    if child.get('strip-space') not in ['No', 'no']:
-                        value = strip_string(value)
+                value = unicode(value)
+                if key == 'cover':
+                    value = get_cover_path(value, path)
+                if disable_strip_space_globally:
+                    if 'strip-space' in child.keys():
+                        if child.get('strip-space') in ['Yes', 'yes']:
+                            value = strip_string(value)
                 else:
-                    value = strip_string(value)
+                    if 'strip-space' in child.keys():
+                        if child.get('strip-space') not in ['No', 'no']:
+                            value = strip_string(value)
+                    else:
+                        value = strip_string(value)
 
         tags[key] = value
-    if len(tags) < len(xml.getchildren()):
+    if len(tags) + empty_tags < len(xml.getchildren()):
         print "Error: there are duplicate tags!"
         sys.exit(1)
     for tag in tags:
@@ -171,7 +177,7 @@ def write_tags_to_mp3(path, tags):
                    ['disc', 'TPOS'], ['comment', 'COMM']]:
         if i in tags:
             if tag == 'USLT':
-                tag = id3.Frames[tag](encoding=3, text=tags[i], desc='', lang='eng')
+                tag = id3.Frames[tag](encoding=3, text=tags[i], lang='eng')
                 audio[tag.HashKey] = tag
             elif tag == 'COMM':
                 tag = id3.Frames[tag](encoding=3, text=tags[i], lang='eng')
