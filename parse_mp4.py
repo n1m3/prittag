@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import struct
+import sys
 from StringIO import StringIO
 
 container_atoms = ('moov', 'udta', 'meta', 'ilst', 'trak', 'mdia', 'minf')
@@ -48,7 +49,14 @@ def get_atom_tree(file_object):
     return atom_tree
 
 def test():
-    with open('test.mp4', 'rb') as mp4:
+    with open(sys.argv[1], 'rb') as mp4:
         tree = get_atom_tree(mp4)
     return tree
 tree = test()
+def p(tree, offset=0):
+    for i in tree:
+        print ' '*offset,i['type']
+        if 'children' in i:
+            p(i['children'], offset+3)
+
+p(tree)
