@@ -62,9 +62,11 @@ def parse_xml(path):
                 chapter2 = {}
                 for element in chapter:
                     if element.tag in ['title', 'time']:
-                        chapter2[element.tag] = strip_string(unicode(element.text))
+                        chapter2[element.tag] = strip_string(
+                            unicode(element.text))
                     else:
-                        print "Warning: malformed chapter tag '%s'" % str(element.tag)
+                        print "Warning: malformed chapter tag '%s'" %\
+                                str(element.tag)
                 if len(chapter2) == 2:
                     chapters2.append(chapter2)
             value = chapters2
@@ -103,8 +105,8 @@ def parse_xml(path):
             if value < 0:
                 bad = True
         if bad:
-            print 'Bad value in <%s>: "%s" is not a positive integer!' % (str(tag),
-                                                                       str(value))
+            print 'Bad value in <%s>: "%s" is not a positive integer!' %\
+                    (str(tag), str(value))
             sys.exit(1)
     return tags
 
@@ -266,7 +268,8 @@ This is free software, and you are welcome to redistribute it
 under certain conditions; see http://www.gnu.org/licenses/gpl.html for details.
 '''
     if len(sys.argv) < 3:
-        print 'usage: %s <xml file with tags> <file to tag> [<file to tag> ...]' % sys.argv[0]
+        print 'usage: %s <xml file with tags> <file to tag> '\
+                '[<file to tag> ...]' % sys.argv[0]
         sys.exit(1)
     else:
         args = sys.argv[1:]
