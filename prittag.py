@@ -96,9 +96,13 @@ def parse_xml(path):
     return tags
 
 def parse_chapters(chapters, disable_strip_space_globally):
+    use_mp4chaps = False
+    if 'use_mp4chaps' in chapters.keys():
+        if chapters.ge('use_mp4chaps') in ['Yes', 'yes']:
+            use_mp4chaps = True
     chapters = [parse_chapter(chapter, disable_strip_space_globally)
                 for chapter in chapters]
-    return chapters
+    return {'use_mp4chaps':use_mp4chaps, 'chapters':chapters}
 
 time_reg = re.compile('(\d\d):(\d\d):(\d\d).(\d\d\d)')
 def parse_chapter(chapter, disable_strip_space_globally):
@@ -236,7 +240,7 @@ def write_tags_to_mp3(path, tags):
         image = id3.APIC(3, 'image/jpeg', 3, 'Cover', image)
         audio[image.HashKey] = image
     if 'chapters' in tags:
-        write_mp3_chapters(audio, tags['chapters'])
+        write_mp3_chapters(audio, tags['chapters']['chapters'])
     audio.save()
 
 
@@ -301,7 +305,10 @@ def write_tags_to_mp4(path, tags):
         audio['covr'] = [get_mp4_coverart(tags['cover'])]
     audio.save()
     if 'chapters' in tags:
-        write_mp4_chapters(path, tags['chapters'])
+        chapters = tags['chapters']
+        if chapters['use_mp4chaps']:
+            chapters = chapters['chapters']
+            write_mp4_chapters(path, chapters)
 
 def get_mp4_coverart(path):
     with open(path, 'rb') as f:
