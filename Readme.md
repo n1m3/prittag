@@ -3,7 +3,7 @@
 Prittag is a modified version of a tool I build for [Radio Tux](http://blog.radiotux.de/).
 I created this version to serve the request made by Tim Pritlove in the [episode 01](http://tim.geekheim.de/2011/03/26/ls001-audio-dateiformate-feeds-und-itunes/) of the podcast "Der Lautsprecher" for a tool which could help him with automating his podcasts generation, so he easily could offer multiple audio formats without more work.
 
-It writes the following tags to multiple Ogg, MP3 or MP4 files:
+It writes the following tags to multiple OGG, MP3 or MP4 files:
 
 - album
 - album artist
@@ -20,7 +20,7 @@ It writes the following tags to multiple Ogg, MP3 or MP4 files:
 - track
 
 Additionally it can add an albumart (cover) to them.
-It has native support for mp3 chapters and can embed the supported subset into mp4 files for convenience using mp4chaps.
+It has native support for MP3 chapters and can embed the supported subset into MP4 files for convenience using mp4chaps.
 
 The name was chosen according to the amazing tool [prittorrent](https://github.com/astro/prittorrent).
 
@@ -65,7 +65,7 @@ Call Prittag from the command line like this: "./prittag.py foo.xml bar.mp3 bar.
 * All paths given in the XML file are either absolute or relative to the location of this XML file.
 
 ###Chapters
-If you want Prittag to embed chapters, add a `<chapters>` section into the `<tags>` tag like this:
+If you want Prittag to embed chapters, add a `<chapters>` section into the `<tags>` section like this:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
