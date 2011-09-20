@@ -33,6 +33,8 @@ from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4, MP4Cover
 import mutagen.id3 as id3
 
+from mp3_chapter_frame import CHAP, CTOC
+
 def parse_xml(path):
     tags = {}
     empty_tags = 0
@@ -56,20 +58,7 @@ def parse_xml(path):
         key = str(child.tag)
         if key == 'chapters':
             chapters = child.getchildren()
-            chapters2 = []
-            for chapter in chapters:
-                chapter = chapter.getchildren()
-                chapter2 = {}
-                for element in chapter:
-                    if element.tag in ['title', 'time']:
-                        chapter2[element.tag] = strip_string(
-                            unicode(element.text))
-                    else:
-                        print "Warning: malformed chapter tag '%s'" %\
-                                str(element.tag)
-                if len(chapter2) == 2:
-                    chapters2.append(chapter2)
-            value = chapters2
+            value = parse_chapters(chapters, disable_strip_space_globally)
         else:
             value = child.text
             if value == None:
@@ -79,16 +68,7 @@ def parse_xml(path):
                 value = unicode(value)
                 if key == 'cover':
                     value = get_cover_path(value, path)
-                if disable_strip_space_globally:
-                    if 'strip-space' in child.keys():
-                        if child.get('strip-space') in ['Yes', 'yes']:
-                            value = strip_string(value)
-                else:
-                    if 'strip-space' in child.keys():
-                        if child.get('strip-space') not in ['No', 'no']:
-                            value = strip_string(value)
-                    else:
-                        value = strip_string(value)
+                value = strip_child(child, value, disable_strip_space_globally)
 
         tags[key] = value
     if len(tags) + empty_tags < len(xml.getchildren()):
@@ -110,12 +90,63 @@ def parse_xml(path):
             sys.exit(1)
     return tags
 
+def parse_chapters(chapters, disable_strip_space_globally):
+    chapters = [parse_chapter(chapter, disable_strip_space_globally)
+                for chapter in chapters]
+    return chapters
+
+time_reg = re.compile('(\d\d):(\d\d):(\d\d).(\d\d\d)')
+def parse_chapter(chapter, disable_strip_space_globally):
+    parsed_chapter = {}
+    for item in chapter:
+        tag = item.tag
+        if tag in ['start', 'stop']:
+            value = item.text
+            value = value.replace('\n','').replace('\r','').strip()
+            time_ = time_reg.match(value)
+            if time_ == None:
+                print 'Error: %s is not a valid timestamp.' % str(value)
+                print 'Please use the format hh:MM:ss.mmm, where M refers to'\
+                        'minute and m to millisecond.'
+                sys.exit(1)
+            else:
+                parsed_chapter[tag] = time_.groups()
+        elif tag in ['description', 'title']:
+            value = item.text
+            value = strip_child(item, value, disable_strip_space_globally)
+            parsed_chapter[tag] = value
+        elif tag == 'image':
+            src = item.get('src')
+            if not src:
+                print 'Error: image tag has no valid src attribute.'
+                sys.exit(1)
+            else:
+                src = src.strip()
+                parsed_chapter[tag] = src
+        else:
+            print 'Error: %s is not a valid chapter tag.' % tag
+            sys.exit(1)
+    return parsed_chapter
+
 def get_cover_path(path, path_to_config):
     config_folder = os.path.split(path_to_config)[0]
     if path != os.path.abspath(path):
         #Make relativ path relativ to config file
         path = os.path.join(config_folder, path)
     return path
+
+def strip_child(child, value, disable_strip_space_globally):
+    if disable_strip_space_globally:
+        if 'strip-space' in child.keys():
+            if child.get('strip-space') in ['Yes', 'yes']:
+                value = strip_string(value)
+    else:
+        if 'strip-space' in child.keys():
+            if child.get('strip-space') not in ['No', 'no']:
+                value = strip_string(value)
+        else:
+            value = strip_string(value)
+    return value
 
 def strip_string(string):
     if len(string.splitlines()) > 1:
@@ -199,6 +230,8 @@ def write_tags_to_mp3(path, tags):
         image = get_mp3_coverart(tags['cover'])
         image = id3.APIC(3, 'image/jpeg', 3, 'Cover', image)
         audio[image.HashKey] = image
+    if 'chapters' in tags:
+        write_mp3_chapters(audio, tags['chapters'])
     audio.save()
 
 
@@ -206,6 +239,37 @@ def get_mp3_coverart(path):
     with open(path, 'rb') as f:
         data = f.read()
     return str(data)
+
+def write_mp3_chapters(audio, chapters):
+    z = 0
+    chapter_ids = []
+    for chapter in chapters:
+        z += 1
+        chap_id = 'chap%s' % str(z).zfill(4)
+        start = get_milliseconds(chapter['start'])
+        stop = get_milliseconds(chapter['stop'])
+        embeded_elements = []
+        for tag in chapter:
+            if tag == 'title':
+                embeded_elements.append(id3.TIT2(encoding=3, text=chapter[tag]))
+            elif tag == 'description':
+                embeded_elements.append(id3.TIT3(encoding=3, text=chapter[tag]))
+            elif tag == 'image':
+                image = get_mp3_coverart(chapter[tag])
+                image = id3.APIC(3, 'image/jpeg', 3, '', image)
+                embeded_elements.append(image)
+        chap = CHAP(element_id = chap_id, start=start, stop=stop,
+              embeded_frames=embeded_elements)
+        audio[chap_id] = chap
+        chapter_ids.append(chap_id)
+    ctoc = CTOC('ctoc0001', False, True, chapter_ids)
+    audio['ctoc0001'] = ctoc
+
+def get_milliseconds(time_stamp):
+    hours, minutes, seconds, milliseconds = time_stamp
+    hours, minutes = int(hours), int(minutes)
+    seconds, milliseconds =  int(seconds), int(milliseconds)
+    return milliseconds+seconds*1000+minutes*60*1000+hours*60*60*1000
 
 def write_tags_to_mp4(path, tags):
     audio = MP4(path)
@@ -244,7 +308,7 @@ def write_mp4_chapters(path, chapters):
     chapter_path = os.path.splitext(path)[0] + '.chapters.txt'
     data = ""
     for chapter in chapters:
-        line = u"%s %s\n" % (chapter['time'], chapter['title'])
+        line = u"%s %s\n" % (chapter['start'], chapter['title'])
         line = line.encode('utf-8')
         data = ''.join((data, line))
     if data:
