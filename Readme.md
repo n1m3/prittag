@@ -103,6 +103,6 @@ Set the `use_mp4chaps` attribute to `yes`:
 
 The supported subset includes the following tags:
 
-* start
-* stop (reqired by the parser, but in fact not used)
-* title
+* `<start>`
+* `<stop>` (reqired by the parser, but in fact not used)
+* `<title>`
