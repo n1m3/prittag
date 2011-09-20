@@ -59,6 +59,13 @@ def parse_xml(path):
         if key == 'chapters':
             chapters = child.getchildren()
             value = parse_chapters(chapters, disable_strip_space_globally)
+        elif key == 'cover':
+            value = child.get('src')
+            if value:
+                value = get_cover_path(value, path)
+            else:
+                print 'Error: cover tag has no valid src attribute.'
+                sys.exit(1)
         else:
             value = child.text
             if value == None:
@@ -66,8 +73,6 @@ def parse_xml(path):
                 continue
             else:
                 value = unicode(value)
-                if key == 'cover':
-                    value = get_cover_path(value, path)
                 value = strip_child(child, value, disable_strip_space_globally)
 
         tags[key] = value

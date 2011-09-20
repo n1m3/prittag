@@ -22,5 +22,5 @@
     <disc>1</disc>
     <number-of-discs>1</number-of-discs>
     <comment>A Comment</comment>
-    <cover>cover.jpg</cover>
+    <cover src="cover.jpg" />
 </tags>
