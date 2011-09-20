@@ -89,6 +89,7 @@ If you want Prittag to embed chapters, add a `<chapters>` section into the `<tag
 * And again:
     * Prittag only supports embedding of JPG files.
     * All paths given in the XML file are either absolute or relative to the location of this XML file.
+
 ####MP4
 As mentioned before Prittag can embed a certain subset of the informatin from the `<chapters>` section into MP4 files.
 For this purpose you must have *mp4chaps* from the [MP4v2 Library](http://code.google.com/p/mp4v2/) installed and availe on your path.
