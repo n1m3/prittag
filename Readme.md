@@ -6,16 +6,16 @@ I created this version to serve the request made by Tim Pritlove in the [episode
 It writes the following tags to multiple OGG, MP3 or MP4 files:
 
 - album
-- album artist
+- album artist (album-artist)
 - artist
 - comment
 - composer
 - date
-- disk
+- disc
 - genre
 - lyrics
-- number of disks
-- number of tracks
+- number of discs (number-of-discs)
+- number of tracks (number-of-tracks)
 - title
 - track
 
@@ -89,3 +89,19 @@ If you want Prittag to embed chapters, add a `<chapters>` section into the `<tag
 * And again:
     * Prittag only supports embedding of JPG files.
     * All paths given in the XML file are either absolute or relative to the location of this XML file.
+####MP4
+As mentioned before Prittag can embed a certain subset of the informatin from the `<chapters>` section into MP4 files.
+For this purpose you must have *mp4chaps* from the [MP4v2 Library](http://code.google.com/p/mp4v2/) installed and availe on your path.
+Set the use_mp4chaps to yes:
+
+```xml
+<chapters use_mp4chaps="yes">
+    <chapter>
+...
+```
+
+The supported subset includes the following tags:
+
+* start
+* stop (reqired by the parser, but in fact not used)
+* title
