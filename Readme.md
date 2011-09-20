@@ -54,11 +54,13 @@ Call Prittag from the command line like this: "./prittag.py foo.xml bar.mp3 bar.
 
 ###Cover
 * If you want to embed a cover art, you can provide the `<cover>` tag.
+
 ```xml
 <tags>
     <cover src="cover.jpg" />
 </tags>
 ```
+
 * Prittag only supports embedding of JPG files.
 * All paths given in the XML file are either absolute or relative to the location of this XML file.
 
