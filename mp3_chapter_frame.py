@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-This module offers an additional ID3 Frames not implementet in mutagen,
-ehich are CHAP and CTOC as defined in http://www.id3.org/id3v2-chapters-1.0.
+This module offers additional ID3 Frames not implementet in mutagen,
+which are CHAP and CTOC as defined in http://www.id3.org/id3v2-chapters-1.0.
 At the moment this implementation supports write only.
 """
 from struct import unpack, pack
