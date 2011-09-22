@@ -35,6 +35,7 @@ import mutagen.id3 as id3
 
 from mp3_chapter_frame import CHAP, CTOC
 
+
 def parse_xml(path):
     tags = {}
     empty_tags = 0
@@ -95,6 +96,7 @@ def parse_xml(path):
             sys.exit(1)
     return tags
 
+
 def parse_chapters(chapters, disable_strip_space_globally):
     use_mp4chaps = False
     if 'use_mp4chaps' in chapters.keys():
@@ -102,16 +104,17 @@ def parse_chapters(chapters, disable_strip_space_globally):
             use_mp4chaps = True
     chapters = [parse_chapter(chapter, disable_strip_space_globally)
                 for chapter in chapters]
-    return {'use_mp4chaps':use_mp4chaps, 'chapters':chapters}
+    return {'use_mp4chaps': use_mp4chaps, 'chapters': chapters}
 
-time_reg = re.compile('(\d\d):(\d\d):(\d\d).(\d\d\d)')
+
 def parse_chapter(chapter, disable_strip_space_globally):
+    time_reg = re.compile('(\d\d):(\d\d):(\d\d).(\d\d\d)')
     parsed_chapter = {}
     for item in chapter:
         tag = item.tag
         if tag in ['start', 'stop']:
             value = item.text
-            value = value.replace('\n','').replace('\r','').strip()
+            value = value.replace('\n', '').replace('\r', '').strip()
             time_ = time_reg.match(value)
             if time_ == None:
                 print 'Error: %s is not a valid timestamp.' % str(value)
@@ -137,6 +140,7 @@ def parse_chapter(chapter, disable_strip_space_globally):
             sys.exit(1)
     return parsed_chapter
 
+
 def get_cover_path(path, path_to_config):
     config_folder = os.path.split(path_to_config)[0]
     if path != os.path.abspath(path):
@@ -157,17 +161,19 @@ def strip_child(child, value, disable_strip_space_globally):
             value = strip_string(value)
     return value
 
+
 def strip_string(string):
     if len(string.splitlines()) > 1:
         new_string = '\n'.join([i.strip() for i in string.splitlines()])
-        new_string = new_string[1:] #remove \n at the beginning of the string
-        if string[len(string)-1] != '\n':
-            new_string = new_string[:len(new_string)-1]
+        new_string = new_string[1:]  # remove \n at the beginning of the string
+        if string[len(string) - 1] != '\n':
+            new_string = new_string[:len(new_string) - 1]
             #remove \n at the end of the string if wasn't present before
         return new_string
 
     else:
         return string.strip()
+
 
 def tag_file(path, tags):
     file_type = get_file_type(path)
@@ -180,11 +186,13 @@ def tag_file(path, tags):
     else:
         raise TypeError("%s is neither a mp3 nor an ogg nor a mp4 file" % path)
 
+
 def get_file_type(path):
     ext = os.path.splitext(path)[1]
     ext = string.replace(ext, '.', '')
     ext = ext.lower()
     return ext
+
 
 def write_tags_to_ogg(path, tags):
     audio = OggVorbis(path)
@@ -203,6 +211,7 @@ def write_tags_to_ogg(path, tags):
         audio['coverarttype'] = '3'
         audio['coverart'] = get_ogg_coverart(tags['cover'])
     audio.save()
+
 
 def get_ogg_coverart(path):
     with open(path, 'rb') as f:
@@ -249,6 +258,7 @@ def get_mp3_coverart(path):
         data = f.read()
     return str(data)
 
+
 def write_mp3_chapters(audio, chapters):
     z = 0
     chapter_ids = []
@@ -260,30 +270,35 @@ def write_mp3_chapters(audio, chapters):
         embeded_elements = []
         for tag in chapter:
             if tag == 'title':
-                embeded_elements.append(id3.TIT2(encoding=3, text=chapter[tag]))
+                embeded_elements.append(id3.TIT2(encoding=3,
+                                                 text=chapter[tag]))
             elif tag == 'description':
-                embeded_elements.append(id3.TIT3(encoding=3, text=chapter[tag]))
+                embeded_elements.append(id3.TIT3(encoding=3,
+                                                 text=chapter[tag]))
             elif tag == 'image':
                 image = get_mp3_coverart(chapter[tag])
                 image = id3.APIC(3, 'image/jpeg', 3, '', image)
                 embeded_elements.append(image)
-        chap = CHAP(element_id = chap_id, start=start, stop=stop,
+        chap = CHAP(element_id=chap_id, start=start, stop=stop,
               embeded_frames=embeded_elements)
         audio[chap_id] = chap
         chapter_ids.append(chap_id)
     ctoc = CTOC('ctoc0001', False, True, chapter_ids)
     audio['ctoc0001'] = ctoc
 
+
 def get_milliseconds(time_stamp):
     hours, minutes, seconds, milliseconds = time_stamp
     hours, minutes = int(hours), int(minutes)
-    seconds, milliseconds =  int(seconds), int(milliseconds)
-    return milliseconds+seconds*1000+minutes*60*1000+hours*60*60*1000
+    seconds, milliseconds = int(seconds), int(milliseconds)
+    return milliseconds + seconds * 1000 + minutes * 60 * 1000 +\
+            hours * 60 * 60 * 1000
+
 
 def write_tags_to_mp4(path, tags):
     audio = MP4(path)
     for dest, source in [['\xa9nam', 'title'], ['\xa9wrt', 'composer'],
-                         ['\xa9alb', 'album'], ['\xa9day','date'],
+                         ['\xa9alb', 'album'], ['\xa9day', 'date'],
                          ['\xa9ART', 'artist'], ['\xa9gen', 'genre'],
                          ['\xa9lyr', 'lyrics'], ['aART', 'album-artist'],
                          ['\xa9cmt', 'comment']]:
@@ -310,11 +325,13 @@ def write_tags_to_mp4(path, tags):
             chapters = chapters['chapters']
             write_mp4_chapters(path, chapters)
 
+
 def get_mp4_coverart(path):
     with open(path, 'rb') as f:
         data = f.read()
     cover = MP4Cover(data)
     return cover
+
 
 def write_mp4_chapters(path, chapters):
     chapter_path = os.path.splitext(path)[0] + '.chapters.txt'
@@ -333,8 +350,9 @@ def write_mp4_chapters(path, chapters):
             call_mp4_chaps(path)
             os.remove(chapter_path)
 
+
 def call_mp4_chaps(path):
-    popen = subprocess.Popen('mp4chaps -i %s' % path, shell = True)
+    popen = subprocess.Popen('mp4chaps -i %s' % path, shell=True)
     popen.wait()
 
 if __name__ == "__main__":
