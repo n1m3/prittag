@@ -74,7 +74,8 @@ def parse_xml(path):
                 continue
             else:
                 value = unicode(value)
-                value = strip_child(child, value, disable_strip_space_globally)
+                value = space_strip_child(child, value,
+                                          disable_strip_space_globally)
 
         tags[key] = value
     if len(tags) + empty_tags < len(xml.getchildren()):
@@ -125,7 +126,8 @@ def parse_chapter(chapter, disable_strip_space_globally):
                 parsed_chapter[tag] = time_.groups()
         elif tag in ['description', 'title']:
             value = item.text
-            value = strip_child(item, value, disable_strip_space_globally)
+            value = space_strip_child(item, value,
+                                      disable_strip_space_globally)
             parsed_chapter[tag] = value
         elif tag == 'image':
             src = item.get('src')
@@ -148,7 +150,8 @@ def get_cover_path(path, path_to_config):
         path = os.path.join(config_folder, path)
     return path
 
-def strip_child(child, value, disable_strip_space_globally):
+
+def space_strip_child(child, value, disable_strip_space_globally):
     if disable_strip_space_globally:
         if 'strip-space' in child.keys():
             if child.get('strip-space') in ['Yes', 'yes']:
