@@ -4,7 +4,7 @@
 #############################################################################
 #  prittag - a tool for tagging mp3, ogg and aac files                      #
 #                                                                           #
-#  Copyright (c) 2010 Nils Mehrtens                                         #
+#  Copyright (c) 2011 - 2012 Nils Mehrtens                                  #
 #                                                                           #
 #  prittag is free software; you can redistribute it and/or modify it       #
 #  under the terms of the GNU General Public License                        #
@@ -359,7 +359,7 @@ def call_mp4_chaps(path):
     popen.wait()
 
 if __name__ == "__main__":
-    print '''prittag  Copyright (C) 2011 Nils Mehrtens
+    print '''prittag  Copyright (C) 2011 - 2012 Nils Mehrtens
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions; see http://www.gnu.org/licenses/gpl.html for details.
