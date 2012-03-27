@@ -101,7 +101,7 @@ def parse_xml(path):
 def parse_chapters(chapters, disable_strip_space_globally):
     use_mp4chaps = False
     if 'use_mp4chaps' in chapters.keys():
-        if chapters.ge('use_mp4chaps') in ['Yes', 'yes']:
+        if chapters.get('use_mp4chaps') in ['Yes', 'yes']:
             use_mp4chaps = True
     chapters = [parse_chapter(chapter, disable_strip_space_globally)
                 for chapter in chapters]
