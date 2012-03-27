@@ -36,7 +36,7 @@ Download it to a place of your choice and install all dependencies.
 Prittag expects a XML file and at least one audio file as arguments.
 The XML file tells Prittag which tags it should write into the files and is expected to look like example.xml.
 By default Prittag will perform a  white space stripping on every tag and every line of multi line tags.
-You can enable and disable this as well globally as for every single tag by adding the option "strip-space" and setting it either to "yes" or "no".
+You can enable and disable this as well globally as for every single tag by adding the option `strip-space` and setting it either to `"yes"` or `"no"`.
 For example:
 
 ```xml
@@ -50,7 +50,7 @@ For example:
 </tags>
 ```
 
-Call Prittag from the command line like this: "./prittag.py foo.xml bar.mp3 bar.oga bar.m4a"
+Call Prittag from the command line like this: `./prittag.py foo.xml bar.mp3 bar.oga bar.m4a`
 
 ###Cover
 * If you want to embed a cover art, you can provide the `<cover>` tag.
@@ -74,17 +74,17 @@ If you want Prittag to embed chapters, add a `<chapters>` section into the `<tag
     <chapters>
         <chapter>
             <start>00:00:00.000</start>
-	    <stop>00:00:25.000</stop>
+    	    <stop>00:00:25.000</stop>
             <title>Opening</title>
-	    <description>Some
-	    Description
-	    Text</description>
-	<image src="image.jpg" />
+    	    <description>Some
+    	    Description
+	        Text</description>
+        	<image src="image.jpg" />
         </chapter>
     </chapters>
 </tags>
 ```
-* `<start>` and `<stop>` must have the format hh:MM:ss:mm where MM refers to minute and mm to milliseconds
+* `<start>` and `<stop>` must have the format `hh:MM:ss:mm` where `MM` refers to minute and `mm` to milliseconds
 * Each tag within a `<chapter>` tag may only be used once.
 * And again:
     * Prittag only supports embedding of JPG files.
