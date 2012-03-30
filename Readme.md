@@ -30,7 +30,9 @@ The name was chosen according to the amazing tool [prittorrent](https://github.c
 - [Mutagen](http://code.google.com/p/mutagen/)
 
 ##Installation
-Download it to a place of your choice and install all dependencies.
+```bash
+» pip install mutagen
+```
 
 ##Usage
 Prittag expects a XML file and at least one audio file as arguments.
@@ -50,7 +52,11 @@ For example:
 </tags>
 ```
 
-Call Prittag from the command line like this: `./prittag.py foo.xml bar.mp3 bar.oga bar.m4a`
+Call Prittag from the command line like this:
+
+```bash
+./prittag.py foo.xml bar.mp3 bar.oga bar.m4a
+```
 
 ###Cover
 * If you want to embed a cover art, you can provide the `<cover>` tag.
