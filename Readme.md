@@ -1,7 +1,7 @@
 #Prittag
 
 Prittag is a modified version of a tool I build for [Radio Tux](http://blog.radiotux.de/).
-I created this version to serve the request made by Tim Pritlove in the [episode 01](http://tim.geekheim.de/2011/03/26/ls001-audio-dateiformate-feeds-und-itunes/) of the podcast "Der Lautsprecher" for a tool which could help him with automating his podcasts generation, so he easily could offer multiple audio formats without more work.
+I created this version to serve the request made by Tim Pritlove in [episode 01](http://tim.geekheim.de/2011/03/26/ls001-audio-dateiformate-feeds-und-itunes/) of the podcast "Der Lautsprecher" for a tool which could help him with automating his podcasts generation, so he easily could offer multiple audio formats without more work.
 
 It writes the following tags to multiple OGG, MP3 or MP4 files:
 
@@ -19,10 +19,8 @@ It writes the following tags to multiple OGG, MP3 or MP4 files:
 - title
 - track
 
-Additionally it can add an albumart (cover) to them.
+Additionally it can embed an albumart (cover).
 It has native support for MP3 chapters and can embed the supported subset into MP4 files for convenience using mp4chaps.
-
-The name was chosen according to the amazing tool [prittorrent](https://github.com/astro/prittorrent).
 
 ##Dependencies
 
@@ -107,8 +105,8 @@ Set the `use_mp4chaps` attribute to `yes`:
 ...
 ```
 
-The supported subset includes the following tags:
+The supported subset consists of the following tags:
 
 * `<start>`
-* `<stop>` (reqired by the parser, but in fact not used)
+* `<stop>`
 * `<title>`
