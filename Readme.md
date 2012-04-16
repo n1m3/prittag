@@ -53,7 +53,7 @@ For example:
 Call Prittag from the command line like this:
 
 ```bash
-./prittag.py foo.xml bar.mp3 bar.oga bar.m4a
+» ./prittag.py foo.xml bar.mp3 bar.oga bar.m4a
 ```
 
 ###Cover
